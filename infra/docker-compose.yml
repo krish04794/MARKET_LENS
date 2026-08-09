@@ -1,0 +1,59 @@
+version: '3.9'
+
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: Acpc@2025
+      MYSQL_DATABASE: marketlens
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ../backend/src/db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pAcpc@2025"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: ../infra/Dockerfile.backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASS: Acpc@2025
+      DB_NAME: marketlens
+      JWT_SECRET: marketlens_jwt_secret_2025
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      ML_API_URL: http://ml:8000
+    depends_on:
+      db:
+        condition: service_healthy
+
+  ml:
+    build:
+      context: ../ml
+      dockerfile: ../infra/Dockerfile.ml
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: ../infra/Dockerfile.frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:

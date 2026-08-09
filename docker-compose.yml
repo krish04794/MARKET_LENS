@@ -1,0 +1,4 @@
+# Shortcut — delegates to infra/docker-compose.yml
+# Run from project root: docker-compose up
+version: '3.9'
+# See infra/docker-compose.yml for full config

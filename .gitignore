@@ -1,0 +1,13 @@
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+.env
+!.env.example
+frontend/dist/
+ml/models/*.pkl
+data/raw/
+data/cache/
+data/exports/
+*.log
+.DS_Store
