@@ -33,6 +33,7 @@ export const riskAPI = {
 export const aiAPI = {
   query: (query) => api.post('/ai/query', { query }),
   insight: (symbol) => api.get(`/ai/insight/${symbol}`),
+  analyze: (symbol) => api.get(`/ai/analyze/${symbol}`),
 };
 
 export const watchlistAPI = {

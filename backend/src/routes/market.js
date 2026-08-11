@@ -2,13 +2,16 @@ const router = require('express').Router();
 const pool = require('../db/pool');
 const { getOrFetchOHLCV, computeAndStoreIndicators, getAllAssets } = require('../services/marketData');
 
-// GET /api/market/assets?type=equity
+// GET /api/market/assets?type=equity&exchange=NASDAQ
 router.get('/assets', async (req, res) => {
   try {
-    const { type } = req.query;
+    const { type, exchange } = req.query;
     let query = 'SELECT * FROM assets';
     const params = [];
-    if (type) { query += ' WHERE market_type = ?'; params.push(type); }
+    const wheres = [];
+    if (type) { wheres.push('market_type = ?'); params.push(type); }
+    if (exchange) { wheres.push('exchange = ?'); params.push(exchange); }
+    if (wheres.length) { query += ' WHERE ' + wheres.join(' AND '); }
     const [rows] = await pool.query(query, params);
     res.json(rows);
   } catch (e) { res.status(500).json({ error: e.message }); }

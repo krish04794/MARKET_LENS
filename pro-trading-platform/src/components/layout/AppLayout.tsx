@@ -38,6 +38,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               active={activeTab === 'Dashboard'} 
               onClick={() => setActiveTab('Dashboard')} 
             />
+            <NavItem 
+              icon={<Search />} 
+              label="AI Screener" 
+              active={activeTab === 'Screener'} 
+              onClick={() => setActiveTab('Screener')} 
+            />
             <div className="pt-4 pb-2 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Markets
             </div>

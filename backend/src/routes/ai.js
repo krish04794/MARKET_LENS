@@ -42,4 +42,19 @@ router.get('/insight/:symbol', async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// GET /api/ai/analyze/:symbol
+router.get('/analyze/:symbol', async (req, res) => {
+  try {
+    const { symbol } = req.params;
+    const [[asset]] = await pool.query('SELECT * FROM assets WHERE symbol = ?', [symbol]);
+    if (!asset) return res.status(404).json({ error: 'Asset not found' });
+    const indicators = await computeAndStoreIndicators(symbol);
+    const { generateDetailedAnalysis } = require('../services/aiService');
+    const analysis = await generateDetailedAnalysis(symbol, indicators);
+    res.json({ symbol, analysis });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 module.exports = router;
